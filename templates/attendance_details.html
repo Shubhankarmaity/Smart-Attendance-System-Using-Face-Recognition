@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/theme.css') }}" rel="stylesheet">
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+    <div class="centered">
+        <h2 class="animated-fade-in">Attendance Details for <span id="attendanceDate"></span></h2>
+        
+        <div class="row g-3 mb-4 w-100 justify-content-center animated-slide-in-up">
+            <div class="col-md-3 col-sm-6">
+                <div class="summary-card total">
+                    <h3>Total Students</h3>
+                    <p id="totalStudents">0</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="summary-card present">
+                    <h3>Present</h3>
+                    <p id="presentCount">0</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="summary-card absent">
+                    <h3>Absent</h3>
+                    <p id="absentCount">0</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container card animated-slide-in-up">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr id="attendanceTableHeader">
+                        </tr>
+                </thead>
+                <tbody id="attendanceTableBody">
+                    </tbody>
+            </table>
+        </div>
+        <div class="mt-4 text-center">
+            <a href="/view_attendance" class="btn btn-primary btn-lg">
+                <i class="fas fa-arrow-left me-2"></i> Back to Select Date
+            </a>
+            <a href="/" class="btn btn-secondary btn-lg ms-3">
+                <i class="fas fa-home me-2"></i> Back to Home
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const date = urlParams.get('date');
+            
+            if (date) {
+                document.getElementById('attendanceDate').textContent = date;
+                fetchAttendance(date);
+            } else {
+                document.getElementById('attendanceTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center">
+                            <div class="alert alert-warning animated-fade-in">
+                                No date selected. Please go back and select a date.
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        });
+
+        async function fetchAttendance(date) {
+            fetch(`/get_attendance/${date}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableHeader = document.getElementById('attendanceTableHeader');
+                    const tableBody = document.getElementById('attendanceTableBody');
+                    tableHeader.innerHTML = '';
+                    tableBody.innerHTML = '';
+
+                    if (data.status === 'success' && data.data && data.data.length > 0) {
+                        // Create headers
+                        data.columns.forEach(col => {
+                            const th = document.createElement('th');
+                            th.textContent = col;
+                            tableHeader.appendChild(th);
+                        });
+
+                        let presentCount = 0;
+                        let absentCount = 0;
+
+                        // Populate table rows
+                        data.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            data.columns.forEach(col => {
+                                const td = document.createElement('td');
+                                td.textContent = row[col];
+                                tr.appendChild(td);
+                            });
+                            tableBody.appendChild(tr);
+
+                            // Update counts
+                            if (row.Status === 'Present') {
+                                presentCount++;
+                            } else if (row.Status === 'Absent') {
+                                absentCount++;
+                            }
+                        });
+
+                        // Update summary cards
+                        document.getElementById('totalStudents').textContent = data.data.length;
+                        document.getElementById('presentCount').textContent = presentCount;
+                        document.getElementById('absentCount').textContent = absentCount;
+
+                    } else {
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="9" class="text-center">
+                                    <div class="alert alert-info animated-fade-in">
+                                        No attendance data available for this date
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                        // Reset summary counts
+                        document.getElementById('totalStudents').textContent = '0';
+                        document.getElementById('presentCount').textContent = '0';
+                        document.getElementById('absentCount').textContent = '0';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching attendance:', error);
+                    document.getElementById('attendanceTableBody').innerHTML = `
+                        <tr>
+                            <td colspan="9" class="text-center">
+                                <div class="alert alert-danger animated-fade-in">
+                                    Error loading attendance data. Please try again later.
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    // Reset summary counts
+                    document.getElementById('totalStudents').textContent = '0';
+                    document.getElementById('presentCount').textContent = '0';
+                    document.getElementById('absentCount').textContent = '0';
+                });
+        }
+    </script>
+</body>
+</html>

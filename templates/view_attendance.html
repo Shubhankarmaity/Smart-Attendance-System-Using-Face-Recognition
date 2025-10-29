@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Attendance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/theme.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+    <div class="centered">
+        <h2 class="animated-fade-in">View Attendance Records</h2>
+        <div class="card animated-slide-in-up" style="max-width: 800px;">
+            <div class="card-body text-center">
+                <h3 class="mb-4">Select Date</h3>
+                <div class="input-group mb-4 justify-content-center">
+                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                    <input type="text" class="form-control" id="datePicker" placeholder="Select a date" style="max-width: 300px;">
+                </div>
+                <button class="btn btn-primary btn-lg" id="viewAttendanceBtn">
+                    <i class="fas fa-search me-2"></i> View Attendance
+                </button>
+                <div class="text-center mt-4">
+                    <a href="/" class="text-decoration-none text-primary">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script>
+        const datePicker = document.getElementById('datePicker');
+        let fp;
+
+        // Initialize Flatpickr
+        document.addEventListener('DOMContentLoaded', function() {
+            fp = flatpickr(datePicker, {
+                dateFormat: "Y-m-d",
+                disableMobile: "true", // Use desktop calendar on mobile
+                onChange: function(selectedDates, dateStr, instance) {
+                    console.log('Date selected:', dateStr);
+                }
+            });
+            console.log('Page loaded, fetching dates...');
+            fetchDates(); // Call fetchDates when the page loads
+        });
+
+        // Fetch available dates and set them as enabled dates in the calendar
+        async function fetchDates() {
+            try {
+                const response = await fetch('/get_dates');
+                const data = await response.json();
+                
+                if (data.status === 'success' && data.dates && data.dates.length > 0) {
+                    // Enable only the dates that have attendance records
+                    fp.set('enable', data.dates);
+                    console.log('Dates populated in calendar:', data.dates);
+                } else {
+                    console.log('No attendance files found or error:', data.message);
+                    // Optionally display a message to the user that no dates are available
+                    // For now, just log to console
+                }
+            } catch (error) {
+                console.error('Error fetching dates:', error);
+            }
+        }
+
+        // View Attendance button click handler
+        document.getElementById('viewAttendanceBtn').addEventListener('click', () => {
+            const selectedDate = document.getElementById('datePicker').value;
+            if (selectedDate) {
+                window.location.href = `/attendance_details?date=${selectedDate}`;
+            } else {
+                alert('Please select a date.');
+            }
+        });
+    </script>
+</body>
+</html>

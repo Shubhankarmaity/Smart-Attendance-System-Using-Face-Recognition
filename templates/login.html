@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/theme.css') }}" rel="stylesheet">
+    <style>
+        /* Specific login card styling - can be moved to theme.css if desired */
+        .login-card {
+            max-width: 450px; /* Slightly wider */
+            padding: 2.5rem;
+            animation: fadeIn 0.8s ease-out; /* Fade-in for the login card */
+        }
+        .form-control {
+            margin-bottom: 1.25rem; /* More spacing */
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+    <div class="centered">
+        <div class="login-card card">
+            <div class="card-body">
+                <h2 class="text-center mb-4">Admin Login</h2>
+                {% if error %}
+                <div class="alert alert-danger animated-fade-in">{{ error }}</div>
+                {% endif %}
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">Login</button>
+                </form>
+                <div class="text-center mt-4">
+                    <a href="/" class="text-decoration-none text-primary">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</body>
+</html>

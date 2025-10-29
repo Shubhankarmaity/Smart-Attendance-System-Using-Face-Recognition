@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Me - Smart Attendance System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/theme.css') }}" rel="stylesheet">
+</head>
+<body>
+  <div class="top-right-controls">
+      <a href="/about" class="top-right-control">
+          <i class="fas fa-info-circle"></i>
+      </a>
+      <button class="theme-toggle top-right-control" id="themeToggle">
+          <i class="fas fa-moon"></i>
+      </button>
+  </div>
+
+  <div class="centered">
+    <div class="card about-card animated-slide-in-up">
+      <div class="card-body">
+        <h1 class="about-heading animated-fade-in">About Me</h1>
+        <img src="{{ url_for('static', filename='img1.jpg') }}" alt="Shubhankar" class="animated__animated animate__pulse animate__delay-1s">
+        <p><strong>Name:</strong> Shubhankar Maity</p>
+        <p><strong>Profession:</strong> Student of Computer Science and Engineering</p>
+        <p><strong>University:</strong> Brainware University</p>
+        <p>This Smart Attendance System is a project developed to simplify and automate attendance tracking using cutting-edge facial recognition technology. It provides a seamless web interface for efficient management of student records.</p>
+        
+        <div class="social-links mt-4">
+            <a href="https://github.com/Shubhankarmaity" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/shubhankar-maity-05976b290/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a href="indiavivo956@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
+        </div>
+
+        <div class="mt-4">
+            <a href="/" class="btn btn-dark btn-lg">
+                <i class="fas fa-home me-2"></i> Back to Home
+            </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</body>
+</html>
