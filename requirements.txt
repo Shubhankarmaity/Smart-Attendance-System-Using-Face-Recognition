@@ -6,7 +6,7 @@ numpy
 pandas
 psutil
 openpyxl
-dlib
+dlib-bin
 Pillow
 click
 itsdangerous
