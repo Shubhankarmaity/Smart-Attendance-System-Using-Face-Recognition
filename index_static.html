@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Attendance System</title>
+
+    <!-- Bootstrap & Font Awesome CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Local CSS -->
+    <link href="static/css/theme.css" rel="stylesheet">
+</head>
+<body>
+    <div class="top-right-controls">
+        <a href="templates/about.html" class="top-right-control">
+            <i class="fas fa-info-circle"></i>
+        </a>
+        <button class="theme-toggle top-right-control" id="themeToggle">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <div class="centered">
+        <h1 class="animated-fade-in">Smart Attendance System</h1>
+        <div class="card animated-slide-in-up" style="max-width: 700px;">
+            <div class="card-body text-center">
+                <h2 class="mb-4">Control Panel</h2>
+                <div id="messageContainer" class="mb-4"></div>
+                <div class="d-grid gap-3 col-md-8 mx-auto">
+                    <button class="btn btn-success btn-lg" id="startBtn">
+                        <i class="fas fa-play-circle me-2"></i> Start Attendance
+                    </button>
+                    <button class="btn btn-danger btn-lg" id="stopBtn">
+                        <i class="fas fa-stop-circle me-2"></i> Stop Attendance
+                    </button>
+                    <a href="templates/view_attendance.html" class="btn btn-primary btn-lg mt-3">
+                        <i class="fas fa-eye me-2"></i> View Attendance
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Local JS -->
+    <script src="static/js/theme.js"></script>
+
+    <script>
+        /* 
+           Because GitHub Pages can’t run your Flask backend, 
+           these fetch() calls are commented out. 
+           Uncomment and update the URLs when your backend is hosted online.
+        */
+
+        let isRunning = false;
+        let attendanceInterval;
+        let autoStopTimeout;
+        const messageContainer = document.getElementById('messageContainer');
+
+        function showMessage(message, type) {
+            messageContainer.innerHTML = `
+                <div class="alert alert-${type} animated-fade-in" role="alert">
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => messageContainer.innerHTML = '', 5000);
+        }
+
+        async function stopAttendance() {
+            /* Example when backend hosted:
+               const response = await fetch('https://your-backend.onrender.com/stop_attendance');
+            */
+            showMessage('Stop Attendance clicked (backend disabled on GitHub Pages)', 'warning');
+            isRunning = false;
+            clearInterval(attendanceInterval);
+            clearTimeout(autoStopTimeout);
+        }
+
+        document.getElementById('startBtn').addEventListener('click', async () => {
+            /* Example when backend hosted:
+               const response = await fetch('https://your-backend.onrender.com/start_attendance');
+            */
+            showMessage('Start Attendance clicked (backend disabled on GitHub Pages)', 'info');
+            isRunning = true;
+            autoStopTimeout = setTimeout(() => {
+                if (isRunning) {
+                    showMessage('Auto-stopping attendance after 20 min', 'warning');
+                    stopAttendance();
+                }
+            }, 20 * 60 * 1000);
+        });
+
+        document.getElementById('stopBtn').addEventListener('click', stopAttendance);
+    </script>
+</body>
+</html>
